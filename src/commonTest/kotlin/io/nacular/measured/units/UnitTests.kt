@@ -71,14 +71,16 @@ class UnitRatioTests {
     }
 
     @Test @JsName("doubleReciprocal")
-    fun `1 ÷ (1 ÷ a) == a`() {
+    fun doubleReciprocal() {
+        // 1 ÷ (1 ÷ a) == a
         val a = UnitsRatio(UnitsA("a"), UnitsB("b"))
 
         expect(a, "$a.reciprocal.reciprocal") { a.reciprocal.reciprocal }
     }
 
     @Test @Ignore @JsName("divAWorks")
-    fun `(A÷B) ÷ A = 1÷B`() {
+    fun divAWorks() {
+        // (A÷B) ÷ A = 1÷B
         val a = UnitsRatio(UnitsA("a", 10.0), UnitsB("b"))
         val b = UnitsB("a", 10.0)
 
@@ -86,7 +88,8 @@ class UnitRatioTests {
     }
 
     @Test @JsName("timesBWorks")
-    fun `(A÷B) * B = A`() {
+    fun timesBWorks() {
+        // (A÷B) * B = A
         val a = UnitsRatio(UnitsA("a", 10.0), UnitsB("b"))
         val b = UnitsB("b", 1.0)
 
@@ -94,14 +97,16 @@ class UnitRatioTests {
     }
 
     @Test @JsName("timesInverseWorks")
-    fun `(A÷B) * (B÷A) = 1`() {
+    fun timesInverseWorks() {
+        // (A÷B) * (B÷A) = 1
         val a = UnitsRatio(UnitsA("a", 10.0), UnitsB("b"))
 
         expect(1.0, "$a * 1/$a") { a * a.reciprocal }
     }
 
     @Test @JsName("divSelfWorks")
-    fun `(A÷B) ÷ (A÷B) = 1`() {
+    fun divSelfWorks() {
+        // (A÷B) ÷ (A÷B) = 1
         val a = UnitsRatio(UnitsA("a", 10.0), UnitsB("b"))
 
         expect(1.0, "$a / $a") { a / a }
@@ -191,7 +196,7 @@ class MeasureTests {
     }
 
     @Test @JsName("timesDivideOperatorsWork")
-    fun `* ÷`() {
+    fun `times ÷`() {
         val op: (Operation<UnitsA>) -> Unit = {
             val unit    = UnitsA("a")
             val start   = 10.0

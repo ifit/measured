@@ -49,6 +49,16 @@ kotlin {
 
     val junitVersion: String by project
 
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "measured"
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -156,7 +166,7 @@ signing {
     setRequired({
         project.hasProperty("release") && gradle.taskGraph.hasTask("publish")
     })
-    useGpgCmd()
+//    useGpgCmd()
     sign(publishing.publications)
 }
 
