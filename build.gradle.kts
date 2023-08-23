@@ -31,21 +31,21 @@ kotlin {
             jvmTarget = "1.8"
         }
     }
-    js {
-        browser {
-            testTask {
-                enabled = false
-            }
-        }
-    }.compilations.all {
-        kotlinOptions {
-            moduleKind = "umd"
-            sourceMap  = !releaseBuild
-            if (sourceMap) {
-                sourceMapEmbedSources = "always"
-            }
-        }
-    }
+//    js {
+//        browser {
+//            testTask {
+//                enabled = false
+//            }
+//        }
+//    }.compilations.all {
+//        kotlinOptions {
+//            moduleKind = "umd"
+//            sourceMap  = !releaseBuild
+//            if (sourceMap) {
+//                sourceMapEmbedSources = "always"
+//            }
+//        }
+//    }
 
     val junitVersion: String by project
 
@@ -80,11 +80,11 @@ kotlin {
             }
         }
 
-        js().compilations["test"].defaultSourceSet {
-            dependencies {
-                implementation(kotlin("test-js"))
-            }
-        }
+//        js().compilations["test"].defaultSourceSet {
+//            dependencies {
+//                implementation(kotlin("test-js"))
+//            }
+//        }
     }
 }
 
