@@ -14,7 +14,7 @@ plugins {
     val kotlinVersion: String by System.getProperties()
 
     id ("org.jetbrains.kotlin.multiplatform") version kotlinVersion
-    id ("org.jetbrains.dokka"               ) version "1.7.20"
+    id ("org.jetbrains.dokka"               ) version "1.8.20"
     id ("maven-publish"                     )
     signing
 }
@@ -52,10 +52,32 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
+        watchosX64(),
+        watchosArm64(),
+        watchosSimulatorArm64(),
+        macosX64(),
+        macosArm64(),
+        tvosX64(),
+        tvosArm64(),
+        tvosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
             baseName = "measured"
+            isStatic = true
+        }
+
+        val isMacOS = System.getProperty("os.name") == "Mac OS X"
+        val osVersion = System.getProperty("os.version").toDoubleOrNull() ?: 0.0
+
+        // Use this flag if using MacOS 14 or newer
+        if (isMacOS && osVersion >= 14.0) {
+            it.compilations.all {
+                compilerOptions.configure {
+                    freeCompilerArgs.add("-linker-options")
+                    freeCompilerArgs.add("-ld64")
+                }
+            }
         }
     }
 
@@ -88,38 +110,14 @@ kotlin {
     }
 }
 
-val dokkaJar by tasks.creating(Jar::class) {
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assembles Kotlin docs with Dokka"
+val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    from(tasks.dokkaHtml)
-}
-
-tasks.dokkaHtml {
-    outputDirectory.set(buildDir.resolve("javadoc"))
-
-    dokkaSourceSets {
-        configureEach {
-            includeNonPublic.set(false)
-
-            // Do not output deprecated members. Applies globally, can be overridden by packageOptions
-            skipDeprecated.set(true)
-
-            // Emit warnings about not documented members. Applies globally, also can be overridden by packageOptions
-            reportUndocumented.set(true)
-
-            // Do not create index pages for empty packages
-            skipEmptyPackages.set(true)
-        }
-    }
 }
 
 publishing {
     publications.withType<MavenPublication>().apply {
-        val jvm by getting {
-            artifact(dokkaJar)
-        }
         all {
+            artifact(javadocJar.get())
             pom {
                 name.set       ("Measured"                           )
                 description.set("Units of measure for Kotlin"        )
@@ -168,25 +166,6 @@ signing {
     })
 //    useGpgCmd()
     sign(publishing.publications)
-}
-
-tasks.dokkaHtml {
-    outputDirectory.set(buildDir.resolve("javadoc"))
-
-    dokkaSourceSets {
-        configureEach {
-            includeNonPublic.set(false)
-
-            // Do not output deprecated members. Applies globally, can be overridden by packageOptions
-            skipDeprecated.set(true)
-
-            // Emit warnings about not documented members. Applies globally, also can be overridden by packageOptions
-            reportUndocumented.set(true)
-
-            // Do not create index pages for empty packages
-            skipEmptyPackages.set(true)
-        }
-    }
 }
 
 rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
